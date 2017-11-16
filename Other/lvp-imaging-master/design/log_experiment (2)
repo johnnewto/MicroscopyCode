@@ -1,0 +1,22 @@
+First caliberating the camera to remove noise
+
+Aligning the optical system to make sure centers are on a line. Focussing on to the camera
+Mounting slide and making sure all LEDs illuminate the frame
+
+Funnel from 25mm to 10mm
+
+Increase LED power
+Test pieces to be readied
+
+Corner LEDs will give sharper images. illumination from a corner will give sharper images as the corners/boundaries shall gain prominence (we are looking at their projections). We also do not want to lose any phase information as this is essential to do an ifft. The shift in illumination direction wavevector shall introduce a term of the form exp(jwt) which shall introduce the shift in the fourier domain. THis hypothesis is subject to rigorous mathematical verification, which we shall be doing.
+
+Images shifting, => phase shift in Fourier domain.
+
+naming convention and convention used in the LEDs...
+TOP LEFT is chosen as the origin. the origin is named 11. naming is pf the form xy, where x is horizontal and y is vertical.
+
+naming convention is yyyymmdd_transparency_xy.png
+
+**We observed that changig the fps on the camera software changed the contrast - why?
+
+distance between the LED matrix surface and the transparency was 21.9cm. 

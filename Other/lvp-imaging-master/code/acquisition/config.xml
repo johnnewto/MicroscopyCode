@@ -1,0 +1,19 @@
+<!-->**********************************************************************
+% Fourier Ptychographic Imaging for transparent objects, transmitted light
+% Image acquisition from a ThorLabs DCx USB2.0 Camera
+%
+% Author: Alankar Kotwal <alankarkotwal13@gmail.com>
+%
+% Images are saved in ./<yyyymmdd>_<SampleDetails>_xy.png
+%**********************************************************************<-->
+
+<fpm>
+	<nX>8</nX>
+	<nY>8</nY>
+	<xRes>1280</xRes>
+	<yRes>1024</yRes>
+	<cameraNo>1</cameraNo>
+	<port>/dev/ttyUSB0</port>
+	<sampleDetails>Transparency/</sampleDetails>
+	<imageFolder>images/</imageFolder>
+</fpm>

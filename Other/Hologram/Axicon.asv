@@ -1,0 +1,59 @@
+% Ring focus with Axicon-Lens.
+% A ring focus is made by setting a phase distribution in the HoloEye LCD and a
+% positive lens. Use has been made of (part of) the 'LightPipes for Matlab' optical toolbox
+% (http://www.okotech.com)
+% Dr F.A. van Goor, University of Twente. April 2010
+
+clear all;
+
+m=1;
+nm=1e-9*m;
+mm=1e-3*m;
+cm=1e-2*m;
+deg=pi/180;
+
+lambda=632.8*nm; %red HeNe laser
+%lambda=543*nm; %green HeNe laser
+size=19.05*mm; %the HoloEye LCD is W x H = 25.4mm x 19.05 mm The LightPipes commands require a square grid
+N=600; %The HoloEye LCD has W x H = 800 x 600 pixels, we only use 600 x 600 pixels
+f=5500*mm; %Focal length of the lens
+
+Phi=179.9*deg; %Top angle of the axicon
+n1=1.5; %refractive index of the axicon material
+
+%LightPipes commands
+F=LPBegin(size,lambda,N); %We start with a plane wavefront: amplitude = 1, phase is uniform and zero.
+F=LPAxicon(Phi,n1,0,0,F); %Propagation of the field through the axicon (0,0 means: the axicon is centered on the optical axis)
+F=LPLens(f,0,0,F); %Propagation through the lens (0,0 means: centered on the optical axis)
+Phase=LPPhase(F); % Here we extract the phase distribution from the field
+
+% Plot the phase distribution on the HoloEye LCD spatial light modulator (SLM)
+v=get(0,'MonitorPositions'); % This Matlab command gives the position(s) of the monitor(s) connected to your PC.
+if (rank(v) == 2) % rank(v) = 1 means that only one monitor is connected, rank(v) = 2 means that two monitors are connected.
+   disp('Dual monitor detected\n');
+   figure(1); 
+   set(gcf,'Position',[v(2,1) v(2,2) 800 600]); % Set the position of the current figure
+   imshow(Phase,[],'InitialMagnification','fit','Border','tight'); % Plot the phase distribution on the second monitor, which should be the 800 x 600 pixels HoloEye LCD
+else
+    disp('Only one screen detected, connect the HoloEye SLM and set-up dual monitor');
+end;
+% Repeat the phase plot on your primary screen
+figure ('Name','Phase Distribution','NumberTitle','off');
+imshow(Phase,[],'InitialMagnification','fit','Border','tight'); 
+
+%Simulate with LightPipes for Matlab: (un-comment the commands below)
+
+F=LPFresnel(f,F); %propagate to the focal plane of the lens
+I=LPIntensity(1,F);%extract the intensity from the field
+
+figure ('Name','Simulation','NumberTitle','off');X=zeros(N);
+imshow(I,[],'InitialMagnification','fit','Border','tight');
+figure ('Name','Simulation','NumberTitle','off');X=zeros(N);
+for i=1:N
+X(i)=-size/2+i*size/N;
+end;
+plot(X/mm,I(N/2,:));
+xlabel('X/mm');ylabel('Intensity [a.u.]');grid on;
+[M,J]=max(I(N/2,:));
+fprintf('The radius of the ring is: %f mm\n',X(J)/mm);
+%}

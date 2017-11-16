@@ -1,0 +1,3 @@
+#!/bin/sh
+
+g++ acquisition.cpp -lboost_system -lueye_api -o acquisition

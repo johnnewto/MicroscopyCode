@@ -1,0 +1,176 @@
+#**************************************************************************************************************
+# Fourier Ptychographic Imaging for transparent objects, transmitted light
+# Implementation of the original paper: Log
+#
+# Author: Alankar Kotwal <alankarkotwal13@gmail.com>
+#**************************************************************************************************************
+
+Day 1
+=====
+
+Discussion:
+-> General introduction, eye stuff, slit lamp
+-> Denoising, illumination correction for raw images
+
+Work:
+-> Familiarised with the lab
+-> Got hold of the camera being used, tested resolution and noise variance
+
+Issues and Todos for tomorrow and later:
+-> Understand what the method does and the reflective case                                 | ??                                                 
+-> LED Matrix, decide what to do for "low illumination by LEDs at edges"                     | Done.
+-> Test-bench: Mostly transparency, no reflection effects on our measurement                  | Done.
+-> 3D print something for the camera                                                | Done.
+-> Play around with lens, camera. See how imaging works. Remember the scale markings on your pad   | Done.
+-> Present your approach                                                         | Done.
+
+Notes:
+-> Long-term goals, according to me:
+   -- Computation acceleration, GPU Parallelization in Matlab (doesn't take much time)
+   -- How much redundancy? Convergence speed and LED separation
+   -- Deconvolute image using lens PSF, not a low-pass filter
+
+#**************************************************************************************************************
+
+Day 2
+=====
+
+Work:
+-> Started coding the basic FPM system specified in the paper
+-> Finalized the presentation
+
+#**************************************************************************************************************
+
+Day 3
+=====
+
+Work:
+-> Finished coding the FPM system specified in the paper
+
+#**************************************************************************************************************
+
+Day 4
+=====
+
+Discussion:
+-> Setting up the system for imaging
+-> Optical fibers for light transport?
+-> Selecting lenses for two-lens system (50mm and 50mm)
+-> Familiarised with the optical table and other systems in the lab
+
+#**************************************************************************************************************
+
+Day 5
+=====
+
+Work:
+-> 3D-printing slide holder and holders for the lens system
+-> Aligning lenses and source with the laser
+
+#**************************************************************************************************************
+
+Day 6
+=====
+
+Work:
+-> Re-designing the slide holder and 3D-printing it
+-> Tried to image slide sample with the LED source in lab, ended up imaging diffraction patterns
+-> Diffuse source needed to prevent saturation
+-> Took pictures of the slide under a microscope
+
+#**************************************************************************************************************
+
+Day 7
+=====
+
+Work:
+-> Found the LED array and made it work
+-> Changed imaging lens to 150mm focal length, 3x magnification
+-> Focussed the sample on the camera feed
+-> Remove dust particles by blowing on the CCD and the lenses!
+-> Aligned the LED array source to center it and illuminate the entire FOV properly
+-> Increase LED intensity?
+-> 3D-printing a holder for the LED array
+-> Decided that the test sample would be a transparency because slides are thick and we're not sure where we're
+   focussing if we try to use a slide
+
+#**************************************************************************************************************
+
+Day 8
+=====
+
+Work:
+-> Finished setting up the system
+-> Camera fixed, both lenses fixed, slide on X stage and LED array source on magnetic mount
+-> Adjust camera contrast, exposure, FPS to get a good image
+-> Aligned the LED array source to center it and illuminate the entire FOV properly
+-> Removed reflection artefacts from the FOV by attaching a paper pipe between the lenses
+-> Improved focus with the LED array using the center LEDs
+-> Imaged the sample illuminating different LEDs. Find images in images/20141129_Transparency
+-> Naming convention is yyyymmdd_Transparency_xy.png. Top left looking from the sample is 11. X increases to
+   the right, Y increases towards the bottom
+-> Distance between the LED matrix surface and the transparency was 21.9cm
+-> OK if LED intensity is unchanged
+-> Working on the mathematics behind the method and processing the images
+
+Questions and insights:
+-> Should the image shift with LEDs? It will shift a bit because incident light direction is changing, that's
+   okay
+-> Illumination from a corner will give sharper images as the corners/boundaries shall gain prominence (we are
+   looking at their projections). We also do not want to lose any phase information as this is essential to do
+   an ifft. The shift in illumination direction wavevector shall introduce a term of the form exp(jwt) which
+   shall introduce the shift in the fourier domain. THis hypothesis is subject to rigorous mathematical
+   verification, which we shall be doing.
+-> We observed that changing the FPS on the camera software changed the contrast - why?
+
+#**************************************************************************************************************
+
+Day 10
+======
+
+Work and insights:
+-> Verifying and understanding Fourier Transforming property: Tried with a Gaussian beam and a circular disk as
+   input. Got expected field patterns, so what we're imaging is actually the Fourier transform of the object
+   field pattern!
+-> Shifts: Since the camera is directed 180 deg away from the optical axis (is 'facing backwards') we need to
+   flip all images 180 deg along the Y axis to correct for this
+   After this is done, shifting the source 'shifts' the Fourier transform in the same direction, presumably by
+   kx, ky. How to verify this? Geometrical optics. Where does the image form when object is in focal plane
+   shifted by some distance? In the image plane, shifted by some distance as well. This relation will give
+   relation between shifts in Fourier and spatial domains
+-> About the lens limiting property: We limited the laser with a slit in the Y-direction and imaged it on a wall
+   As expected we saw a sinc along x. Now putting a lens in front of the slit limits the sinc in the x-direction
+   Confirms this. With lens: 6 maxima, without: 12 seen
+-> Convolve these properties => imaging at an angle with a lens is shifting image spectrum to kx, ky and limiting
+   it.
+
+#**************************************************************************************************************
+
+Day 11
+======
+
+Work:
+-> Finishing up code and calculations for transmissive mode
+-> Need a relation between actual k-space and image k-space! This is given here:
+   https://greenfluorescentblog.wordpress.com/2013/01/10/calculating-the-pixel-sizes-on-images/
+   Quoting:
+   Objective magnification
+   Lens magnification (in some microscopes, it is possible to get extra mag of 1.25x, 1.6x or 2x.
+   C mount (is usually 1x)
+   Pixel size – is the actual pixel size of the camera that is attached to the microscope.
+   Binning – i.e. combining a cluster of pixels to a single pixel. The common options are 1X1, 2X2 and 4X4. 
+   The formula: Image pixel size = camera pixel size x binning / (obj. mag x lens mag x C mount)
+-> Some scaling between the image and the real world
+-> Camera used was a ThorLabs DCx, pixel size 5um.
+
+#**************************************************************************************************************
+
+Day 14
+======
+
+Work:
+-> Automating the image acquisition process using the DCx camera SDK and libboost
+
+Insights:
+-> Found this: http://www.biophot.caltech.edu/publications/pdf/oe-22-1-338_PhaseSpaceFPM_RH_2014.pdf, reading
+   it to be able to follow the analysis and make a similar analysis for reflective mode.

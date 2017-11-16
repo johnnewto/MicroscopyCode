@@ -1,0 +1,17 @@
+# Executables, objects and libraries
+*.o
+*.out
+*.so
+*.ar
+
+# Temporary files
+*~
+*.bkp
+*.save
+.~lock*
+
+# Configuration
+config/path
+
+# Test images
+# images/*
